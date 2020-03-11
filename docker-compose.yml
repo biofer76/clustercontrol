@@ -1,0 +1,63 @@
+version: '3.5'
+services:
+  clustercontrol:
+    image: severalnines/clustercontrol:1.7.5
+    networks:
+      - ccnet
+    ports:
+      - "5000:80"
+      - "5001:443"
+    environment:
+      CMON_PASSWORD_FILE: /run/secrets/CC_CMON_PASSWORD
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/CC_MYSQL_ROOT_PASSWORD
+    volumes:
+      - cc-cmond:/etc/cmon.d
+      - cc-datadir:/var/lib/mysql
+      - cc-ssh:/root/.ssh
+      - cc-cmonlib:/var/lib/cmon
+      - cc-backups:/root/backups
+    deploy:
+      restart_policy:
+        condition: on-failure
+    secrets:
+      - CC_CMON_PASSWORD
+      - CC_MYSQL_ROOT_PASSWORD
+  pg_master:
+    build: postgis/
+    image: postgis:9.6-2.4
+    networks:
+      - ccnet
+    ports:
+      - 5551:5432
+    environment:
+      AUTO_DEPLOYMENT: 0
+      POSTGRES_USER: pguser
+      POSTGRES_PASS: /run/secrets/POSTGRES_PASS
+      POSTGRES_DBNAME: postgisdb
+    depends_on:
+      - clustercontrol
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  cc-cmond:
+  cc-datadir:
+  cc-ssh:
+  cc-cmonlib:
+  cc-backups:
+
+networks:
+  ccnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.2.0.0/24
+
+secrets:
+  CC_CMON_PASSWORD:
+    external: true
+  CC_MYSQL_ROOT_PASSWORD:
+    external: true
+  POSTGRES_PASS:
+    external: true

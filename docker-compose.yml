@@ -13,12 +13,10 @@ services:
       - cc-ssh:/root/.ssh
       - cc-cmonlib:/var/lib/cmon
       - cc-backups:/root/backups
-    deploy:
-      restart_policy:
-        condition: on-failure
     environment:
       CMON_PASSWORD_FILE: /run/secrets/CC_CMON_PASSWORD
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/CC_MYSQL_ROOT_PASSWORD
+    restart: always
     secrets:
       - CC_CMON_PASSWORD
       - CC_MYSQL_ROOT_PASSWORD
@@ -35,10 +33,9 @@ services:
       - clustercontrol
     env_file:
       - postgres.env
-    deploy:
-      restart_policy:
-        condition: on-failure
-        max_attempts: 3
+    secrets:
+      - POSTGRES_PASS
+    restart: always
   pg_slave1:
     image: postgis:9.6-2.4
     networks:
@@ -51,10 +48,9 @@ services:
       - pg_master
     env_file:
       - postgres.env
-    deploy:
-      restart_policy:
-        condition: on-failure
-        max_attempts: 3
+    secrets:
+      - POSTGRES_PASS
+    restart: always
   pg_slave2:
     image: postgis:9.6-2.4
     networks:
@@ -67,10 +63,9 @@ services:
       - pg_master
     env_file:
       - postgres.env
-    deploy:
-      restart_policy:
-        condition: on-failure
-        max_attempts: 3
+    secrets:
+      - POSTGRES_PASS
+    restart: always
 
 volumes:
   cc-cmond:

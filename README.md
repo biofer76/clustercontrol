@@ -1,4 +1,4 @@
-# ClusterControl for custom databases in Docker containers
+# ClusterControl for custom Docker databases
 
 [ClusterControl](https://severalnines.com/product/clustercontrol) is an all-inclusive open source database management system for MySQL, MongoDB, and PostgreSQL with advanced monitoring and scaling features.
 
@@ -40,7 +40,10 @@ t0xrvb0hmlcpoo3xd6fd2p20u   CC_MYSQL_ROOT_PASSWORD                       4 secon
 wfptqxlun4jeusutcgs2h3hoa   POSTGRES_PASS                                3 seconds ago       3 seconds ago
 ```
 
-For the full list of available variables and default values please check original project: [kartoza/postgis:9.6-2.4](https://hub.docker.com/r/kartoza/postgis)
+For the full list of available variables and default values please check respective projects on GitHub:
+
+- [severalnines/docker](https://github.com/severalnines/docker)
+- [kartoza/postgis:9.6-2.4](https://github.com/kartoza/docker-postgis)
 
 ## How it works
 

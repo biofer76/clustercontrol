@@ -7,9 +7,6 @@ services:
     ports:
       - "5000:80"
       - "5001:443"
-    environment:
-      CMON_PASSWORD_FILE: /run/secrets/CC_CMON_PASSWORD
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/CC_MYSQL_ROOT_PASSWORD
     volumes:
       - cc-cmond:/etc/cmon.d
       - cc-datadir:/var/lib/mysql
@@ -19,6 +16,9 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    environment:
+      CMON_PASSWORD_FILE: /run/secrets/CC_CMON_PASSWORD
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/CC_MYSQL_ROOT_PASSWORD
     secrets:
       - CC_CMON_PASSWORD
       - CC_MYSQL_ROOT_PASSWORD
@@ -28,17 +28,49 @@ services:
     networks:
       - ccnet
     ports:
-      - 5551:5432
-    environment:
-      AUTO_DEPLOYMENT: 0
-      POSTGRES_USER: pguser
-      POSTGRES_PASS: /run/secrets/POSTGRES_PASS
-      POSTGRES_DBNAME: postgisdb
+      - 5550:5432
+    volumes:
+      - pg_master:/usr/local/pgsql/data
     depends_on:
       - clustercontrol
+    env_file:
+      - postgres.env
     deploy:
       restart_policy:
         condition: on-failure
+        max_attempts: 3
+  pg_slave1:
+    image: postgis:9.6-2.4
+    networks:
+      - ccnet
+    ports:
+      - 5551:5432
+    volumes:
+      - pg_slave1:/usr/local/pgsql/data
+    depends_on:
+      - pg_master
+    env_file:
+      - postgres.env
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+  pg_slave2:
+    image: postgis:9.6-2.4
+    networks:
+      - ccnet
+    ports:
+      - 5552:5432
+    volumes:
+      - pg_slave2:/usr/local/pgsql/data
+    depends_on:
+      - pg_master
+    env_file:
+      - postgres.env
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
 
 volumes:
   cc-cmond:
@@ -46,6 +78,9 @@ volumes:
   cc-ssh:
   cc-cmonlib:
   cc-backups:
+  pg_master:
+  pg_slave1:
+  pg_slave2:
 
 networks:
   ccnet:

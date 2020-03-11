@@ -1,4 +1,4 @@
-# ClusterControl for custom database Docker containers
+# ClusterControl for custom databases in Docker containers
 
 [ClusterControl](https://severalnines.com/product/clustercontrol) is an all-inclusive open source database management system for MySQL, MongoDB, and PostgreSQL with advanced monitoring and scaling features.
 
@@ -12,7 +12,6 @@ I created this repository to manage a databases cluster deployed with custom Doc
 ## Manage Secrets
 
 If you want to use Docker containers in production, chances are you’ll want to store your credentials in a secure way.  
-A way to do that for Docker Swarm is to use Docker secrets.
 
 ### ClusterControl secrets
 
@@ -22,7 +21,8 @@ echo "password1"| docker secret create CC_CMON_PASSWORD -
 echo "password2"| docker secret create CC_MYSQL_ROOT_PASSWORD -
 ```
 
-In this project I'm using [kartoza/postgis:9.6-2.4](https://hub.docker.com/r/kartoza/postgis) Docker image from Docker hub, it includes PostgreSQL 9.6 and PostGIS extension version 2.4.  
+In this project I'm using [kartoza/postgis:9.6-2.4](https://hub.docker.com/r/kartoza/postgis) Docker image from Docker hub, it includes **PostgreSQL 9.6** and **PostGIS extension version 2.4**.
+
 It requires default variables for databases initialization, I suggest to use at least PostgreSQL database password as secret, you just have to run:
 ```
 echo "password3"| docker secret create POSTGRES_PASS -
@@ -44,7 +44,8 @@ For the full list of available variables and default values please check origina
 
 ## How it works
 
-First of all you have to build the PostGIS database Docker image, it starts from `kartoza/postgis:9.6-2.4` image and then adds all required packages to work with ClusterControl.  
+First of all you have to build the PostGIS database Docker image, it starts from `kartoza/postgis:9.6-2.4` image and then adds all required packages to work with ClusterControl.
+
 I created a new `entrypoint.sh` as bash scripts wrapper in order to include entrypoint files from `kartoza/postgis:9.6-2.4` and `clustercontrols` Docker projects.
 
 Build the  master PostGIS Docker image:
@@ -57,10 +58,42 @@ When new image postgis:9.6-2.4 is be ready, you can launch your ClusterControl d
 - 1 PostGIS Master node
 - 2 PostGIS Slave nodes
 
+Run Docker containers stack with Docker Compose command:
 
+```
+docker-compose -p dbc up
+```
 
+I used `-p dbc` argument to create a project name (dbc) for my new cluster, first command run containers stack in foreground, run in background with `-d` argument:
 
----
+```
+docker-compose -p dbc up -d
+```
+
+Stop and remove your all containers with:
+
+```
+docker-compose -p dbc down
+```
+
+All important data, as well postgresql data, are stored and will be kept as persistent data in Docker volumes.  
+
+You can check `docker-compose.yml` file to see which folders are set as Docker volume.
+
+If you restart cluster stack all data will be available as before, in case you want to wipe all data in persistent volumes run the command:
+
+```
+docker volume prune
+```
+
+## Manage Databases with ClusterControl
+
+Open to ClusterControl Dashboard through the web address: http://server-ip-or-hostname:5000/clustercontrol  
+Now you can configure a new cluster and import PostGIS nodes.
+
+In order to configure your cluster please follow official guide on Severalnines website: https://severalnines.com/
+
+--------------------------------
 MIT License
 
 

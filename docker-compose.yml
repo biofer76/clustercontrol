@@ -31,6 +31,8 @@ services:
       - pg_master:/usr/local/pgsql/data
     depends_on:
       - clustercontrol
+    environment:
+      - POSTGRES_PASS: /run/secrets/POSTGRES_PASS
     env_file:
       - postgres.env
     secrets:
@@ -46,6 +48,8 @@ services:
       - pg_slave1:/usr/local/pgsql/data
     depends_on:
       - pg_master
+    environment:
+      - POSTGRES_PASS: /run/secrets/POSTGRES_PASS
     env_file:
       - postgres.env
     secrets:
@@ -61,6 +65,8 @@ services:
       - pg_slave2:/usr/local/pgsql/data
     depends_on:
       - pg_master
+    environment:
+      - POSTGRES_PASS: /run/secrets/POSTGRES_PASS
     env_file:
       - postgres.env
     secrets:

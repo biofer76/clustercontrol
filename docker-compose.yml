@@ -13,13 +13,9 @@ services:
       - cc-ssh:/root/.ssh
       - cc-cmonlib:/var/lib/cmon
       - cc-backups:/root/backups
-    environment:
-      CMON_PASSWORD_FILE: /run/secrets/CC_CMON_PASSWORD
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/CC_MYSQL_ROOT_PASSWORD
+    env_file:
+      - clustercontrol.env
     restart: always
-    secrets:
-      - CC_CMON_PASSWORD
-      - CC_MYSQL_ROOT_PASSWORD
   pg_master:
     build: postgis/
     image: postgis:9.6-2.4
@@ -31,12 +27,8 @@ services:
       - pg_master:/usr/local/pgsql/data
     depends_on:
       - clustercontrol
-    environment:
-      POSTGRES_PASS: /run/secrets/POSTGRES_PASS
     env_file:
       - postgres.env
-    secrets:
-      - POSTGRES_PASS
     restart: always
   pg_slave1:
     image: postgis:9.6-2.4
@@ -48,12 +40,8 @@ services:
       - pg_slave1:/usr/local/pgsql/data
     depends_on:
       - pg_master
-    environment:
-      POSTGRES_PASS: /run/secrets/POSTGRES_PASS
     env_file:
       - postgres.env
-    secrets:
-      - POSTGRES_PASS
     restart: always
   pg_slave2:
     image: postgis:9.6-2.4
@@ -65,12 +53,8 @@ services:
       - pg_slave2:/usr/local/pgsql/data
     depends_on:
       - pg_master
-    environment:
-      POSTGRES_PASS: /run/secrets/POSTGRES_PASS
     env_file:
       - postgres.env
-    secrets:
-      - POSTGRES_PASS
     restart: always
 
 volumes:
@@ -89,11 +73,3 @@ networks:
       driver: default
       config:
         - subnet: 172.2.0.0/24
-
-secrets:
-  CC_CMON_PASSWORD:
-    external: true
-  CC_MYSQL_ROOT_PASSWORD:
-    external: true
-  POSTGRES_PASS:
-    external: true

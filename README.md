@@ -9,35 +9,26 @@ I created this repository to manage a databases cluster deployed with custom Doc
 - Docker Engine
 - Docker Compose 3.5+
 
-## Manage Secrets
+## Environment variables
 
-If you want to use Docker containers in production, chances are you’ll want to store your credentials in a secure way.  
+All services require environment configuration, to accomplish this you must create two files in project root:
+- `clustercontrol.env`
+- `postgres.env`
 
-### ClusterControl secrets
+Each file contains environment configuration for its service.
 
-You must set MySQL root password and CMON Component password
+`clustercontrol.env`
 ```
-echo "password1"| docker secret create CC_CMON_PASSWORD -
-echo "password2"| docker secret create CC_MYSQL_ROOT_PASSWORD -
-```
-
-In this project I'm using [kartoza/postgis:9.6-2.4](https://hub.docker.com/r/kartoza/postgis) Docker image from Docker hub, it includes **PostgreSQL 9.6** and **PostGIS extension version 2.4**.
-
-It requires default variables for databases initialization, I suggest to use at least PostgreSQL database password as secret, you just have to run:
-```
-echo "password3"| docker secret create POSTGRES_PASS -
+CMON_PASSWORD_FILE=password1
+MYSQL_ROOT_PASSWORD_FILE=password2
 ```
 
-You can choose to set more secrets or use environment variables in plain text format in Docker Compose file.
-
-After secrets creation you can list them through listing command:
+`postgres.env`
 ```
-docker secret ls
-
-ID                          NAME                     DRIVER              CREATED             UPDATED
-auxdxxtivkm9u9243gir2a70y   CC_CMON_PASSWORD                             5 seconds ago       5 seconds ago
-t0xrvb0hmlcpoo3xd6fd2p20u   CC_MYSQL_ROOT_PASSWORD                       4 seconds ago       4 seconds ago
-wfptqxlun4jeusutcgs2h3hoa   POSTGRES_PASS                                3 seconds ago       3 seconds ago
+AUTO_DEPLOYMENT=0
+POSTGRES_USER=pguser
+POSTGRES_DBNAME=postgisdb
+POSTGRES_PASS=password3
 ```
 
 For the full list of available variables and default values please check respective projects on GitHub:

@@ -41,7 +41,7 @@ services:
     depends_on:
       - pg_master
     env_file:
-      - postgres.env
+      - postgres_replicator.env
     restart: always
   pg_slave2:
     image: postgis:9.6-2.4
@@ -54,7 +54,7 @@ services:
     depends_on:
       - pg_master
     env_file:
-      - postgres.env
+      - postgres_replicator.env
     restart: always
 
 volumes:

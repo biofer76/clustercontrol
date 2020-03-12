@@ -14,21 +14,31 @@ I created this repository to manage a databases cluster deployed with custom Doc
 All services require environment configuration, to accomplish this you must create two files in project root:
 - `clustercontrol.env`
 - `postgres.env`
+- `postgres_replicator.env`
 
 Each file contains environment configuration for its service.
 
-`clustercontrol.env`
+Create a new file `clustercontrol.env` then copy and paste following variables and change default values.
 ```
 CMON_PASSWORD_FILE=password1
 MYSQL_ROOT_PASSWORD_FILE=password2
 ```
 
-`postgres.env`
+Create a new file `postgres.env` then copy and paste following variables and change `POSTGRES_PASS` default value.
 ```
 AUTO_DEPLOYMENT=0
 POSTGRES_USER=pguser
 POSTGRES_DBNAME=postgisdb
 POSTGRES_PASS=password3
+```
+
+Create a new file `postgres_replicator.env` then copy and paste following variables and change `POSTGRES_PASS` default value.
+```
+AUTO_DEPLOYMENT=0
+POSTGRES_USER=pguser
+POSTGRES_PASS=password3
+ALLOW_IP_RANGE=0.0.0.0/0s
+REPLICATE_FROM=pg_master
 ```
 
 For the full list of available variables and default values please check respective projects on GitHub:

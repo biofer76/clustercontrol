@@ -107,7 +107,7 @@ docker volume prune
 Instead using bulk volumes removal command, you may use this command to remove a single volume:
 ```
 docker volume rm <volume-name>
-```s
+```
 
 ## Manage Databases with ClusterControl
 
